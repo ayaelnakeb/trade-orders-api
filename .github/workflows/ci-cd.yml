@@ -25,11 +25,8 @@ jobs:
           pip install pytest 
 
       - name: Run tests
-        run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)  # Add current directory to Python path
-          pytest --maxfail=1 --disable-warnings -q
-      - name: Print installed packages
-        run: pip freeze
+        run: pytest
+  
 
   deploy:
     needs: build-and-test
