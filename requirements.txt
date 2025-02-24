@@ -6,4 +6,3 @@ psycopg2==2.9.6   # Only needed if you use PostgreSQL
 httpx
 starlette
 
-
