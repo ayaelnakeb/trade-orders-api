@@ -5,5 +5,6 @@ pydantic==1.10.2
 psycopg2==2.9.6   # Only needed if you use PostgreSQL
 httpx
 starlette
+pytest
 
 
