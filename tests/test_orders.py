@@ -5,7 +5,7 @@ import pytest
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))  # Adds project root to Python path
 
-from main import app  # Adjust import if 'main.py' is at the root level
+from app.main import app  # Adjust import if 'main.py' is at the root level
 
 
 client = TestClient(app)
