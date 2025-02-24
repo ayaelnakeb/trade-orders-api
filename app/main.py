@@ -11,10 +11,15 @@ app = create_app()
 
 @app.on_event("startup")
 def on_startup():
-    # Initialize DB tables
+    # Initialize DB tablesuvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+
     init_db()
 
 app = FastAPI()
+app.include_router(orders.router, prefix="/orders")
+
+
 
 @app.get("/")
 def root():

@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r app/requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest --maxfail=1 --disable-warnings -q
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.EC2_SSH_KEY }}
+          known_hosts: ${{ secrets.EC2_KNOWN_HOSTS }}
+
+      - name: SSH and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@3.15.165.165 << 'EOF'
+            cd /home/ubuntu/your-repo || git clone https://github.com/your-username/your-repo.git /home/ubuntu/your-repo
+            cd /home/ubuntu/your-repo
+
+            git pull origin main
+
+            docker stop trade-orders-api || true
+            docker rm trade-orders-api || true
+            docker build -t trade-orders-api:latest .
+            docker run -d -p 80:8000 --name trade-orders-api trade-orders-api:latest
+          EOF

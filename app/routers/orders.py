@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/orders", response_model=schemas.OrderResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.OrderResponse, status_code=status.HTTP_201_CREATED)
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     db_order = models.Order(
         symbol=order.symbol,
@@ -26,6 +26,6 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     db.refresh(db_order)
     return db_order
 
-@router.get("/orders", response_model=List[schemas.OrderResponse], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=List[schemas.OrderResponse], status_code=status.HTTP_200_OK)
 def get_orders(db: Session = Depends(get_db)):
     return db.query(models.Order).all()
